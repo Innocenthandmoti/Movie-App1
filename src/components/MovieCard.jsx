@@ -35,3 +35,5 @@ function MovieCard({ id, title, image, rating, year }) {
     ▶ Watch Now
   </button>;
 }
+
+export default MovieCard;
