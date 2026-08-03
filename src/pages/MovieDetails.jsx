@@ -29,14 +29,17 @@ function MovieDetails() {
   useEffect(() => {
     async function fetchMovie() {
       try {
-        const [movieResponse, videoResponse] = await Promise.all([
-          api.get(`/movie/${id}`),
-          api.get(`/movie/${id}/videos`),
-        ]);
+        const [movieResponse, videoResponse, creditsResponse] =
+          await Promise.all([
+            api.get(`/movie/${id}`),
+            api.get(`/movie/${id}/videos`),
+            api.get(`/movie/${id}/credits`),
+          ]);
 
         setMovie({
           ...movieResponse.data,
           videos: videoResponse.data.results,
+          cast: creditsResponse.data.cast,
         });
       } catch (error) {
         console.error("Error fetching movie:", error);
@@ -85,6 +88,26 @@ function MovieDetails() {
           ))}
         </div>
         <p className="mt-6 text-lg text-gray-300">{movie.overview}</p>{" "}
+        <h2 className="text-3xl font-bold mt-12 mb-6">Cast</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          {movie.cast.slice(0, 6).map((actor) => (
+            <div key={actor.id} className="text-center">
+              <img
+                src={
+                  actor.profile_path
+                    ? `https://image.tmdb.org/t/p/w300${actor.profile_path}`
+                    : "https://via.placeholder.com/300x450?text=No+Image"
+                }
+                alt={actor.name}
+                className="w-full rounded-lg"
+              />
+
+              <h3 className="mt-3 font-semibold">{actor.name}</h3>
+
+              <p className="text-gray-400 text-sm">{actor.character}</p>
+            </div>
+          ))}
+        </div>
         {trailer && (
           <button
             onClick={() => setShowTrailer(!showTrailer)}
